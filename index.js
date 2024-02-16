@@ -1,11 +1,12 @@
 import express from "express";
 import { PORT } from "./config/index.js";
 import globalDb from "./db/index.js";
+import routes from "./routes/index.js";
 
 const app = express();
 const db = globalDb.db;
 
-app.get("/", async (req, res) => {
+/* app.get("/", async (req, res) => {
 	const username = req.query.username;
 	const allUsers = await globalDb
 		.getCollection("userLeetcodeStats")
@@ -35,7 +36,10 @@ app.get("/usernames", async (req, res) => {
 			message: "Success",
 			data: usernames.map((user) => user.leetcodeUsername),
 		});
-});
+}); */
+
+app.use(express.json());
+app.use("/api", routes);
 
 app.listen(PORT, async () => {
 	await globalDb.connect();
