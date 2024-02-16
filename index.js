@@ -6,9 +6,35 @@ const app = express();
 const db = globalDb.db;
 
 app.get("/", async (req, res) => {
-    // use pagination, get 10 users at a time
-	const allUsers = await globalDb.getCollection("userLeetcodeStats").find({}).limit(10).toArray();
+	const username = req.query.username;
+	const allUsers = await globalDb
+		.getCollection("userLeetcodeStats")
+		.findOne({ leetcodeUsername: username })
+        .catch((err) => {
+            console.error(err);
+        });
 	return res.status(200).json({ message: "Success", data: allUsers });
+});
+
+app.get("/count", async (req, res) => {
+	const count = await globalDb
+		.getCollection("userLeetcodeStats")
+		.countDocuments();
+	return res.status(200).json({ message: "Success", data: count });
+});
+
+app.get("/usernames", async (req, res) => {
+	const usernames = await globalDb
+		.getCollection("userLeetcodeStats")
+		.find()
+		.project({ leetcodeUsername: 1, _id: 0 })
+		.toArray();
+	return res
+		.status(200)
+		.json({
+			message: "Success",
+			data: usernames.map((user) => user.leetcodeUsername),
+		});
 });
 
 app.listen(PORT, async () => {
