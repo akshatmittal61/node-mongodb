@@ -1,3 +1,4 @@
+import * as githubControllers from "./github.js";
 import * as leetcodeControllers from "./leetcode.js";
 
-export { leetcodeControllers };
+export { githubControllers, leetcodeControllers };
