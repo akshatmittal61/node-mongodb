@@ -1,6 +1,33 @@
 import { MongoClient } from "mongodb";
-import { dbUri } from "../config/index.js";
+import { db } from "../config/index.js";
 
-const client = new MongoClient(dbUri);
+const client = new MongoClient(db.uri);
 
-export default client;
+class DbManager {
+	constructor() {
+		this.db = null;
+	}
+
+	getDb() {
+		return this.db;
+	}
+
+	async connect() {
+		try {
+			await client.connect();
+			console.log("Connected to the database");
+			this.db = client.db(db.name);
+		} catch (error) {
+			console.log(error);
+			process.exit(1);
+		}
+	}
+
+    getCollection(collectionName) {
+        return this.db.collection(collectionName);
+    }
+}
+
+var globalDb = new DbManager();
+
+export default globalDb;
